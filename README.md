@@ -10,7 +10,7 @@
 [![Room DB](https://img.shields.io/badge/Room-2.6.1-sky.svg?logo=room)](https://developer.android.com/training/data-storage/room)
 [![Mokito](https://img.shields.io/badge/mokito-2.2.0-red.svg?)](https://lv.binarybabel.org/catalog/gradle/latest)
 [![Junit](https://img.shields.io/badge/junit-4.13.2-pink.svg?)](https://lv.binarybabel.org/catalog/gradle/latest)
-[![Gradle](https://img.shields.io/badge/gradle-8.2.0-orange.svg?)](https://lv.binarybabel.org/catalog/gradle/latest)
+[![Gradle](https://img.shields.io/badge/gradle-8.2.1-orange.svg?)](https://lv.binarybabel.org/catalog/gradle/latest)
 
 <p align="start">
 <img src="gifs/1.png" width="25%"/>
@@ -117,69 +117,8 @@ which making it easier to develop and test.
 -	Add to Favorites: Users can add any cat image to their list of favorites by clicking on a heart-shaped button associated with each image.
 -	Change App Theme: Users have the option to customize the application's visual theme to their preference. This includes options for light and dark themes or other theme customizations.
 ##### *Note*
-In this example, I initially used two activities to display cats to the user and manage adding or deleting cats from the favorite list. However, it's possible to achieve the same functionality within 
-a single activity by implementing a navigation scenario for a fullView Composable, jetpack Navigation, you can follow these steps:
-1. Set Up Jetpack Navigation:
-```kotlin 
- object Route {
-        const val CAT_FULL_View = "Cat_Image_AS_Sized/{CatUrl}/{imageId}"
-}
-```
-replace CatAvtivity current composable method
-```kotlin 
-@Composable
-    fun CatsDestination() {
-        CatScreen(
-            state = viewModel.state.collectAsState().value,
-            effectFlow = viewModel.effects.receiveAsFlow()
-        ) { itemUrl, imageId ->
-           
-               // call navigate logic here 
-                      // Navigate to the full view with the selected cat data
-                            navController.navigate("catFullView/$itemUrl/$imageId")
-        }
-    }
-```
-then pass this route to navigation host case like
-```kotlin 
-composable(route=Route.CAT_FULL_View,
-arguments = listOf(navArgument("itemUrl") { type = NavType.StringType },
-                   navArgument("imageId") { type = NavType.StringType }
-                    )
-) {backStackEntry ->
-                //call relevent compose method here to display full vie to user 
-                    val catImageId = backStackEntry.arguments?.getString("imageId")
-                      viewModel.checkFav(catImageId)
-                    val catImageUrl = backStackEntry.arguments?.getString("itemUrl")
-                       CatsFullView(catImageUrl)
-                       
 
-            }
-
-```
-2. Migrate All Api calls from CatsDetailsViewModel to CatsViewModel .After that you will only have one ViewModel present in Application.
-3. Now you have to make changes in your composable to display fullView
-```kotlin
- @Composable
-    private fun CatsFullView(url:String) {
-        val isFavourite by viewModel.isFavourite.collectAsState()
-        initialState = remember { viewModel.isFavourite.value }
-        CatFullDetail(
-            url = url,
-            isFavourite = isFavourite,
-            favSelection = {
-                viewModel.updateFavouriteState(it)
-                if (it) {
-                    viewModel.postFavCatData()
-                } else viewModel.deleteFavCatData()
-            }
-        )
-
-    }
-```
-4. According to above calls make changes in CatFullScreen.kt file 
-5. Replace topbar navigation icon to back icon when you saw user full view screen and handled this according to back flow.
- 
+In this instance, I initially employed a single activity with multiple composables to present cat information to the user and facilitate the addition or removal of cats from the favorites list. Nevertheless, it is feasible to accomplish the same functionality using more than one activity by substituting the navigation scenario of a fullView Composable with a new activity. The compose call is included in this new activity. [You can click on this link to inspect the code for your reference:](https://github.com/PC-Wipro/LBG)
  🙌 Now after that we have two ways to show same flow to user✌️.
 
     
@@ -191,19 +130,16 @@ JUnit is used for unit testing of UI components. Tests are written to verify the
 Mockito is used for unit testing the API and network-related components. It allows you to create mock objects and simulate the behavior of external dependencies to ensure that your API interactions are tested independently.
 
 ## Environment Setup
-  - First, make sure you have Android ```(Android Studio Giraffe | 2022.3.1 Patch 2)```  version installed
+  - First, make sure you have Android ```(Android Studio Hedgehog | 2023.1.1 Patch 1)```  version installed
   - Android Studio's Gradle JDK version should be Java 17.0.6.
     
 ### Commits Includes
-#### Commit 03526cafbe0ffcbe4df87f9c91d0c3512c8bac71
+> [!IMPORTANT]  
+> [#### Commit 568f04933eae9591b04e210c2046f70af30e9be9]
+
 This commit introduces the following major changes:
 
 **Dependency Injection (DI) Implementation:** The commit includes the implementation of Dependency Injection. This architectural pattern is essential for providing objects with their dependencies, improving code modularity and testability.
-
-**Basic MVVM Project Architecture:** The commit lays the foundation for the MVVM (Model-View-ViewModel) architecture. This separation of concerns is crucial for building maintainable and scalable applications.
-
-#### Commit c66c4dae69ba5fbc18bf793ff11b5b54e6cc504d
-This commit encompasses significant improvements and features, including:
 
 **MVVM Clean Architecture:** The project now adheres to the MVVM Clean Architecture. This architectural style emphasizes the separation of data, domain logic, and presentation concerns, resulting in code that is clean and maintainable.
 
@@ -213,18 +149,9 @@ This commit encompasses significant improvements and features, including:
 
 **UI Enhancements:** The commit includes enhancements to the user interface, improving the overall user experience.
 
-**SOLID Principles and Kotlin Components:** The code adheres to the SOLID principles, ensuring that the code base is structured with a focus on Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion principles. Additionally, Kotlin-specific components and functions are leveraged for efficient and expressive code.
+**Updated Koin Module Declaration**
 
-#### commit 4ed608578f7475396c10c9fce795da047b51e61f
-**Enhanced Flow Handling:** Improvements in flow handling make the application more responsive and efficient in handling asynchronous data changes in the data layer.
-
-**changes Koin UseCase module**  Koin Use Case Module Update
-
-In the project's evolution, there have been changes to the declaration of the Koin use case module. These changes enhance the way use cases are injected into the application, providing more flexibility and modularity.
-
-Updated Koin Module Declaration
-
-Previously, the Koin use case module might have been declared as follows:
+the Koin use case module might have been declared as follows:
  
 ```
 "single" definition, create an object that is persistent with the entire container lifetime (can't be dropped).
@@ -264,8 +191,6 @@ scope {
 To integrate it into the ViewModel, ensure that your ViewModel implements the KoinComponent. This allows the ViewModel to leverage Koin's dependency injection features seamlessly.
 
 **SOLID Principles and Kotlin Components:** The code adheres to the SOLID principles, ensuring that the code base is structured with a focus on Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, and Dependency Inversion principles. Additionally, Kotlin-specific components and functions are leveraged for efficient and expressive code.
- 
-
  
 
   **Thank you **😎
