@@ -135,7 +135,7 @@ Mockito is used for unit testing the API and network-related components. It allo
     
 ### Commits Includes
 > [!IMPORTANT]  
-> [#### Commit 568f04933eae9591b04e210c2046f70af30e9be9]
+> [Commit 568f04933eae9591b04e210c2046f70af30e9be9](https://github.com/PC-Wipro/LBG-SingleActivity/commit/568f04933eae9591b04e210c2046f70af30e9be9)
 
 This commit introduces the following major changes:
 
